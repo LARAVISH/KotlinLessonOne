@@ -1,4 +1,4 @@
-package com.example.kotlinlesson
+package com.example.kotlinlesson.reservation
 
 object Repository {
     private val list: MutableList<HomeWork> = ArrayList()
