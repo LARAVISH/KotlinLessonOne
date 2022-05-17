@@ -12,6 +12,7 @@ import androidx.lifecycle.get
 import com.example.kotlinlesson.R
 import com.example.kotlinlesson.databinding.FragmentMainBinding
 import com.example.kotlinlesson.model.MainViewModel
+import com.example.kotlinlesson.viewmodel.AppState
 
 
 class MainFragment : Fragment() {
@@ -38,13 +39,19 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel :: class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner,Observer<Any>{
+        viewModel.getLiveData().observe(viewLifecycleOwner,Observer<AppState>{
            renderData(it)
-       viewModel.getWeatherFromServer()
+
         })
+        viewModel.getWeatherFromServer()
     }
-    fun renderData(data: Any){
-        Toast.makeText(requireContext(),"OK",Toast.LENGTH_LONG).show()
+    fun renderData(appState: AppState){
+        when(appState){
+            is AppState.Error -> Toast.makeText(requireContext(),appState.error.message,Toast.LENGTH_LONG).show()
+            is AppState.Loading -> Toast.makeText(requireContext(),"${appState.progress}",Toast.LENGTH_LONG).show()
+            is AppState.Success -> Toast.makeText(requireContext(),appState.weatherData,Toast.LENGTH_LONG).show()
+        }
+
     }
 
     override fun onDestroy() {
