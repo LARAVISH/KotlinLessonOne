@@ -13,6 +13,7 @@ import com.example.kotlinlesson.R
 import com.example.kotlinlesson.databinding.FragmentMainBinding
 import com.example.kotlinlesson.model.MainViewModel
 import com.example.kotlinlesson.viewmodel.AppState
+import com.google.android.material.snackbar.Snackbar
 
 
 class MainFragment : Fragment() {
@@ -47,9 +48,15 @@ class MainFragment : Fragment() {
     }
     fun renderData(appState: AppState){
         when(appState){
-            is AppState.Error -> Toast.makeText(requireContext(),appState.error.message,Toast.LENGTH_LONG).show()
-            is AppState.Loading -> Toast.makeText(requireContext(),"${appState.progress}",Toast.LENGTH_LONG).show()
-            is AppState.Success -> Toast.makeText(requireContext(),appState.weatherData,Toast.LENGTH_LONG).show()
+            is AppState.Error -> {binding.loadingLayout.visibility = View.GONE
+            Snackbar.make(binding.mainView,"Error",Snackbar.LENGTH_LONG).setAction("Try again"){
+                viewModel.getWeatherFromServer()}.show()
+           } //при ошибке прогресс бар скрываем
+
+            is AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE // идет загрузка прогресс бар видим
+
+            is AppState.Success -> {binding.loadingLayout.visibility = View.GONE
+            Snackbar.make(binding.mainView,"Success",Snackbar.LENGTH_LONG).show()} // при сакцессе тоже скрываем and show cnackbar
         }
 
     }
